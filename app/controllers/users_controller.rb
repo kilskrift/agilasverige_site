@@ -17,7 +17,11 @@ class UsersController < InheritedResources::Base
         render :layout => 'admin'
       end
       format.csv do
-        @users  = User.all
+        @conference = Conference.current
+        if params[:conference_id]
+          @conference = Conference.find(params[:conference_id])
+        end
+        @users = @conference.users.order("first_name, last_name")
         header = "First Name, Last Name, Organization, Address, Zip Code, Postal Address, Country, Invoice Reference, Telephone Number, Attending Dinner, Food Preferences, Comments, Email\n"
         csv = CSV.generate(header) do |csv|
           @users.each do |user|
